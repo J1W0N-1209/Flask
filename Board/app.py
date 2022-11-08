@@ -8,8 +8,10 @@ cur = conn.cursor() # cursor라는 오브젝트는 데이터베이스의 인터�
 print("Cursor has been set up successfully") 
 cur.execute("""
 CREATE TABLE IF NOT EXISTS Board(
+    idx INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
-    context TEXT
+    context TEXT,
+    date date
 )
 """)
 
@@ -32,11 +34,32 @@ def add():
         context = request.form["context"]
         with sqlite3.connect("database.db") as con:
             cur = con.cursor()
-            cur.execute(f"INSERT INTO Board (name,context) VALUES('{name}','{context}')")
+            cur.execute(f"INSERT INTO Board (name,context,date) VALUES('{name}','{context}',date())")
             con.commit()
         return redirect(url_for("board"))
     else:
         return render_template("add.html")
+
+@app.route('/read/<int:idx>/')
+def read(idx):
+    if request.method == 'GET':
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(f"SELECT * FROM Board WHERE idx={idx}")
+        rows = cur.fetchall()
+        return render_template('read.html',rows=rows)
+
+@app.route('/delete', methods=["GET","POST"])
+def delete():
+    if request.method == "POST":
+        idx = request.form["idx"]
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(f"DELETE FROM Board WHERE idx={idx}")
+        con.commit()
+
+        return redirect(url_for('board'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

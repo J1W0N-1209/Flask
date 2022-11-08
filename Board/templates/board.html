@@ -16,8 +16,9 @@
     <h4><a href="{{url_for('add')}}">추가</a></h4>
     <table border="1" width="600" align="center">
         <tr>
-            <th>이름</th>
-            <th>내용</th>
+            <th>Idx</th>
+            <th>Name</th>
+            <th>Date</th>
         </tr>
         {% for row in rows %} 
         <tr>
@@ -25,7 +26,10 @@
                 {{ row[0] }}
             </td>
             <td>
-                {{ row[1] }}
+                <a href="/read/{{ row[0] }}">{{ row[1] }}</a>
+            </td>
+            <td>
+                {{ row[3] }}
             </td>
         </tr>
         {% endfor %}
