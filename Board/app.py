@@ -49,7 +49,7 @@ def read(idx):
         rows = cur.fetchall()
         return render_template('read.html',rows=rows)
 
-@app.route('/delete', methods=["GET","POST"])
+@app.route('/delete', methods=["POST"])
 def delete():
     if request.method == "POST":
         idx = request.form["idx"]
@@ -60,6 +60,18 @@ def delete():
 
         return redirect(url_for('board'))
 
+@app.route('/update/<int:idx>',methods = ["GET","POST"])
+def update(idx):
+    if request.method == "GET":
+        with sqlite3.connect("database.db") as con:
+            cur = con.cursor()
+            cur.execute(f"SELECT * FROM Board WHERE idx={idx}")
+            rows = cur.fetchall()
+            con.commit()
+        return render_template('update.html',rows=rows)
+        
+    
+        
 
 if __name__ == '__main__':
     app.run(debug=True)
