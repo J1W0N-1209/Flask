@@ -62,16 +62,23 @@ def delete():
 
 @app.route('/update/<int:idx>',methods = ["GET","POST"])
 def update(idx):
-    if request.method == "GET":
+    if request.method == "POST":
+        name = request.form["name"]
+        context = request.form["context"]
+
         with sqlite3.connect("database.db") as con:
             cur = con.cursor()
-            cur.execute(f"SELECT * FROM Board WHERE idx={idx}")
-            rows = cur.fetchall()
+            cur.execute(f"UPDATE Board SET name='{name}',context='{context}' WHERE idx={idx} ")
             con.commit()
-        return render_template('update.html',rows=rows)
-        
-    
-        
+        return redirect(url_for('board'))
 
+    else :
+        con = sqlite3.connect("database.db")
+        cur = con.cursor()
+        cur.execute(f"SELECT * FROM Board WHERE idx={idx}")
+        rows = cur.fetchall()
+        return render_template('update.html',rows=rows)
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)
